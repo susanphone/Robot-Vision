@@ -2,11 +2,11 @@
  *Hunter Lloyd
  * Copyrite.......I wrote, ask permission if you want to use it outside of class. 
  */
+package SourceCodeFor442Himp;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.awt.image.PixelGrabber;
 import java.awt.image.MemoryImageSource;
@@ -85,28 +85,7 @@ class IMP implements MouseListener{
       frame.setJMenuBar(bar);
       frame.setVisible(true);      
    }
-    public void drawHistogram () {
-        JFrame redFrame = new JFrame("Red");
-        redFrame.setSize(305, 600);
-        redFrame.setLocation(800, 0);
-        JFrame greenFrame = new JFrame("Green");
-        greenFrame.setSize(305, 600);
-        greenFrame.setLocation(1150, 0);
-        JFrame blueFrame = new JFrame("blue");
-        blueFrame.setSize(305, 600);
-        blueFrame.setLocation(1450, 0);
-        MyPanel redPanel = new MyPanel();
-        MyPanel greenPanel = new MyPanel();
-        MyPanel bluePanel = new MyPanel();
-        redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
-        redFrame.setVisible(true);
-        greenFrame.getContentPane().add(greenPanel, BorderLayout.CENTER);
-        greenFrame.setVisible(true);
-        blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
-        blueFrame.setVisible(true);
-        start.setEnabled(true);
 
-    }
    
    /* 
     * This method creates the pulldown menu and sets up listeners to selection of the menu choices. If the listeners are activated they call the methods 
@@ -118,9 +97,14 @@ class IMP implements MouseListener{
      JMenu fun = new JMenu("Functions");
 
       JMenuItem firstItem = new JMenuItem("MyExample - fun1 method");
-      JMenuItem rotateItem = new JMenuItem("Rotate 90");
+      JMenuItem rotateItem = new JMenuItem("Rotate 90 Degrees");
       JMenuItem grayscaleItem = new JMenuItem("Luminosity Grayscale");
-      JMenuItem blurItem = new JMenuItem("Blur");
+      JMenuItem blurItem = new JMenuItem("Blur Image");
+      JMenuItem edgeItem = new JMenuItem("Detect Edges");
+      JMenuItem histogramItem = new JMenuItem("Histogram Colors");
+      JMenuItem equalizeItem = new JMenuItem("Equalization");
+      JMenuItem colorItem = new JMenuItem("Track Color");
+
 
 
       firstItem.addActionListener(new ActionListener() {
@@ -132,19 +116,43 @@ class IMP implements MouseListener{
       rotateItem.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent evt) {
-              fun2();
+              rotate();
           }
       });
       grayscaleItem.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent evt) {
-              fun3();
+              luminosity();
           }
       });
       blurItem.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent evt) {
-              fun4();
+              blur();
+          }
+      });
+      edgeItem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+              edge_detection();
+          }
+      });
+      histogramItem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+              histogram_colors();
+          }
+      });
+      equalizeItem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+              equalization();
+          }
+      });
+      colorItem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+              color_tracker();
           }
       });
 
@@ -153,6 +161,10 @@ class IMP implements MouseListener{
       fun.add(rotateItem);
       fun.add(grayscaleItem);
       fun.add(blurItem);
+      fun.add(edgeItem);
+      fun.add(histogramItem);
+      fun.add(equalizeItem);
+      fun.add(colorItem);
      
       return fun;   
 
@@ -312,7 +324,7 @@ class IMP implements MouseListener{
         } 
      resetPicture();
   }
-    private void fun2() {
+    private void rotate() {
         int[][] temp = new int[width][height]; //temp with proper dimensions
 
         for (int i = 0; i < height; i++) {
@@ -330,7 +342,7 @@ class IMP implements MouseListener{
         resetPicture(); //rewrites the image
     }
 
-    private void fun3() {
+    private void luminosity() {
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
                 int rgbArray[] = new int[4];
@@ -350,7 +362,45 @@ class IMP implements MouseListener{
         resetPicture();
     }
 
-    private void fun4() {
+    private void blur() {
+
+    }
+
+    private void edge_detection() {
+
+    }
+
+    private void histogram_colors() {
+        JFrame redFrame = new JFrame("Red");
+        redFrame.setSize(305, 600);
+        redFrame.setLocation(800, 0);
+        JFrame greenFrame = new JFrame("Green");
+        greenFrame.setSize(305, 600);
+        greenFrame.setLocation(1150, 0);
+        JFrame blueFrame = new JFrame("blue");
+        blueFrame.setSize(305, 600);
+        blueFrame.setLocation(1450, 0);
+        MyPanel redPanel = new MyPanel();
+        MyPanel greenPanel = new MyPanel();
+        MyPanel bluePanel = new MyPanel();
+        redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
+        redFrame.setVisible(true);
+        greenFrame.getContentPane().add(greenPanel, BorderLayout.CENTER);
+        greenFrame.setVisible(true);
+        blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
+        blueFrame.setVisible(true);
+        start.setEnabled(true);
+    }
+
+    private void equalization() {
+
+    }
+
+    private void color_tracker() {
+
+    }
+
+    public void drawHistogram () {
 
     }
   
