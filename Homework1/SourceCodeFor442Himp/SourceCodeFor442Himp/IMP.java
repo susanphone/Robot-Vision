@@ -80,7 +80,11 @@ class IMP implements MouseListener{
       start.setEnabled(false);
       start.addActionListener(new ActionListener(){
             @Override
-          public void actionPerformed(ActionEvent evt){ fun1(); }
+          public void actionPerformed(ActionEvent evt){
+                redPanel.drawHistogram();
+                greenPanel.drawHistogram();
+                bluePanel.drawHistogram();
+            }
            });
       butPanel.add(start);
       frame.getContentPane().add(butPanel, BorderLayout.SOUTH);
@@ -425,31 +429,8 @@ class IMP implements MouseListener{
     }
 
     private void color_tracker() {
-      drawHistogram();
 
       resetPicture();
-    }
-
-    private void drawHistogram() {
-        JFrame redFrame = new JFrame("Red");
-        redFrame.setSize(305, 600);
-        redFrame.setLocation(800, 0);
-        JFrame greenFrame = new JFrame("Green");
-        greenFrame.setSize(305, 600);
-        greenFrame.setLocation(1150, 0);
-        JFrame blueFrame = new JFrame("blue");
-        blueFrame.setSize(305, 600);
-        blueFrame.setLocation(1450, 0);
-        MyPanel redPanel = new MyPanel();
-        MyPanel greenPanel = new MyPanel();
-        MyPanel bluePanel = new MyPanel();
-        redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
-        redFrame.setVisible(true);
-        greenFrame.getContentPane().add(greenPanel, BorderLayout.CENTER);
-        greenFrame.setVisible(true);
-        blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
-        blueFrame.setVisible(true);
-        start.setEnabled(true);
     }
 
   
@@ -481,6 +462,26 @@ class IMP implements MouseListener{
    public static void main(String [] args)
    {
       IMP imp = new IMP();
+       System.out.println("max " + max + " : " + offset);
+       JFrame redFrame = new JFrame("Red");
+       redFrame.setSize(305, 600);
+       redFrame.setLocation(800, 0);
+       JFrame greenFrame = new JFrame("Green");
+       greenFrame.setSize(305, 600);
+       greenFrame.setLocation(1150, 0);
+       JFrame blueFrame = new JFrame("blue");
+       blueFrame.setSize(305, 600);
+       blueFrame.setLocation(1450, 0);
+       MyPanel redPanel = new MyPanel();
+       MyPanel greenPanel = new MyPanel();
+       MyPanel bluePanel = new MyPanel();
+       redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
+       redFrame.setVisible(true);
+       greenFrame.getContentPane().add(greenPanel, BorderLayout.CENTER);
+       greenFrame.setVisible(true);
+       blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
+       blueFrame.setVisible(true);
+       start.setEnabled(true);
    }
  
 }

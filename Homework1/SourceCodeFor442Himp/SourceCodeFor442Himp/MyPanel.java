@@ -14,9 +14,12 @@ int startX, flag, startY, endX, endY;
     BufferedImage grid;
     Graphics2D gc;
     int rgb[];
+    private int max;
 
-	public MyPanel()
+	public MyPanel(int [] r, int m)
 	{
+	    rgb = r;
+	    max = m;
 	   startX = startY = 0;
            endX = endY = 100;
  	}
@@ -43,6 +46,22 @@ int startX, flag, startY, endX, endY;
     {
         gc.drawLine(startX, startY, endX, endY);
         repaint();
+    }
+
+    public void drawHistogram() {
+	    mapValues();
+	    for(int i=20; i<275; i++) {
+	        gc.drawLine(i, 595, i, 595-(int)(rgb[i-20]/5));
+        }
+	    repaint();
+    }
+
+    public void mapValues() {
+	    double offset = 590.0/max;
+	    System.out.println(max + " offset " + offset);
+	    for (int i = 0; i<rgb.length; i++) {
+	        rgb[i] = (int)(offset * rgb[i]);
+        }
     }
 
    
