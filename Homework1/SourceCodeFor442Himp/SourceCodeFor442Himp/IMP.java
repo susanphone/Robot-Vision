@@ -35,7 +35,7 @@ class IMP implements MouseListener{
     int picture[][];
 
     /* 
-     * In the Constructor I set up the GUI, the frame the menus. The open pulldown 
+     * In the Constructor I set up the GUI, the frame the menus. The open pull down
      * menu is how you will open an image to manipulate. 
      */
    IMP()
@@ -81,9 +81,9 @@ class IMP implements MouseListener{
       start.addActionListener(new ActionListener(){
             @Override
           public void actionPerformed(ActionEvent evt){
-                redPanel.drawHistogram();
-                greenPanel.drawHistogram();
-                bluePanel.drawHistogram();
+//                redPanel.drawHistogram();
+//                greenPanel.drawHistogram();
+//                bluePanel.drawHistogram();
             }
            });
       butPanel.add(start);
@@ -421,7 +421,11 @@ class IMP implements MouseListener{
     }
 
     private void histogram_colors() {
+      drawHistogram();
         return;
+    }
+
+    private void drawHistogram() {
     }
 
     private void equalization() {
@@ -433,7 +437,6 @@ class IMP implements MouseListener{
       resetPicture();
     }
 
-  
 
   
   
@@ -462,26 +465,6 @@ class IMP implements MouseListener{
    public static void main(String [] args)
    {
       IMP imp = new IMP();
-       System.out.println("max " + max + " : " + offset);
-       JFrame redFrame = new JFrame("Red");
-       redFrame.setSize(305, 600);
-       redFrame.setLocation(800, 0);
-       JFrame greenFrame = new JFrame("Green");
-       greenFrame.setSize(305, 600);
-       greenFrame.setLocation(1150, 0);
-       JFrame blueFrame = new JFrame("blue");
-       blueFrame.setSize(305, 600);
-       blueFrame.setLocation(1450, 0);
-       MyPanel redPanel = new MyPanel();
-       MyPanel greenPanel = new MyPanel();
-       MyPanel bluePanel = new MyPanel();
-       redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
-       redFrame.setVisible(true);
-       greenFrame.getContentPane().add(greenPanel, BorderLayout.CENTER);
-       greenFrame.setVisible(true);
-       blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
-       blueFrame.setVisible(true);
-       start.setEnabled(true);
    }
  
 }
