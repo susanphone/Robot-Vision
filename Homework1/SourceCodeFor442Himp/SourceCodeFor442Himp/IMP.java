@@ -7,9 +7,11 @@ package SourceCodeFor442Himp;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.awt.image.PixelGrabber;
 import java.awt.image.MemoryImageSource;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.prefs.Preferences;
 
 class IMP implements MouseListener{
@@ -324,7 +326,7 @@ class IMP implements MouseListener{
         } 
      resetPicture();
   }
-    private void rotate() {
+  private void rotate() {
         int[][] temp = new int[width][height]; //temp with proper dimensions
 
         for (int i = 0; i < height; i++) {
@@ -341,7 +343,6 @@ class IMP implements MouseListener{
         picture = temp; // solidifies the temp spots
         resetPicture(); //rewrites the image
     }
-
     private void luminosity() {
         for (int i = 0; i < height; i++)
             for (int j = 0; j < width; j++) {
@@ -363,14 +364,73 @@ class IMP implements MouseListener{
     }
 
     private void blur() {
+        int[][] temp = new int[height][width]; //temp with proper dimensions
 
+        //goes through all values
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+
+                int rgbArray[] = new int[4];
+
+                //extracts rgb colors
+                rgbArray = getPixelArray(picture[i][j]);
+
+                int sumr = 0;
+                int sumg = 0;
+                int sumb = 0;
+                //cycles through a 3x3 mask
+                for (int a = -1; a <= 1; a++) {
+                    for (int b = -1; b <= 1; b++) {
+                        if (((i + a) >= 0 && (j + b) >= 0 && (i + a) < height && (b + j) < width)) {
+                            rgbArray = getPixelArray(picture[i + a][j + b]); //grabs the colors for each of the pixels in the mask
+                            sumr += rgbArray[1]; //sums red
+                            sumg += rgbArray[2]; //sums green
+                            sumb += rgbArray[3]; //sums blue
+                        }
+                    }
+                }
+                //averages sum from mask
+                int red = (sumr /9);
+                int green = (sumg /9);
+                int blue = (sumb /9);
+
+                //puts average back into the array
+                rgbArray[1] = red;
+                rgbArray[2] = green;
+                rgbArray[3] = blue;
+
+                //put the new averaged rgb colors into a temp picture
+                temp[i][j] = getPixels(rgbArray);;
+            }
+        }
+        picture = temp; // puts temp back into original photo
+        resetPicture(); //rewrites the image
     }
 
     private void edge_detection() {
-
+        float[] matrix = {
+                0.111f, 0.111f, 0.111f,
+                0.111f, 0.111f, 0.111f,
+                0.111f, 0.111f, 0.111f,
+        };
+        return;
     }
 
     private void histogram_colors() {
+        return;
+    }
+
+    private void equalization() {
+        return;
+    }
+
+    private void color_tracker() {
+      drawHistogram();
+
+      resetPicture();
+    }
+
+    private void drawHistogram() {
         JFrame redFrame = new JFrame("Red");
         redFrame.setSize(305, 600);
         redFrame.setLocation(800, 0);
@@ -392,17 +452,6 @@ class IMP implements MouseListener{
         start.setEnabled(true);
     }
 
-    private void equalization() {
-
-    }
-
-    private void color_tracker() {
-
-    }
-
-    public void drawHistogram () {
-
-    }
   
 
   

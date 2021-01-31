@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import javax.swing.*;
 
 public class MyPanel extends JPanel
 {
@@ -12,6 +13,7 @@ int startX, flag, startY, endX, endY;
 
     BufferedImage grid;
     Graphics2D gc;
+    int rgb[];
 
 	public MyPanel()
 	{
