@@ -13,6 +13,8 @@ import java.awt.image.PixelGrabber;
 import java.awt.image.MemoryImageSource;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.prefs.Preferences;
+import java.util.*;
+
 
 class IMP implements MouseListener{
    JFrame frame;
@@ -319,7 +321,6 @@ class IMP implements MouseListener{
        for(int j=0; j<width; j++)
        {   
           int rgbArray[] = new int[4];
-         // luminosity formula 0.21 R + 0.72 G + 0.07 B
           //get three ints for R, G and B
           rgbArray = getPixelArray(picture[i][j]);
          
@@ -332,18 +333,17 @@ class IMP implements MouseListener{
   }
   private void rotate() {
         int[][] temp = new int[width][height]; //temp with proper dimensions
-
+        resetPicture();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                temp[j][height-1-i] = picture[i][j]; //moves the pixel into the temp spot
+                temp[j][height - 1 - i] = picture[i][j]; //moves the pixel into the temp spot
             }
         }
-
         int h = width; //swap height and width
         width = height;
         height = h;
         picture = new int[height][width]; // resets the length of picture
-
+        resetPicture();
         picture = temp; // solidifies the temp spots
         resetPicture(); //rewrites the image
     }
@@ -412,28 +412,213 @@ class IMP implements MouseListener{
     }
 
     private void edge_detection() {
-        float[] matrix = {
-                0.111f, 0.111f, 0.111f,
-                0.111f, 0.111f, 0.111f,
-                0.111f, 0.111f, 0.111f,
+        luminosity();
+
+        int[][] temp = new int[height][width]; //temp with proper dimensions
+        int[][] mask3 = {
+                {-1, -1, -1},
+                {-1, 8, -1},
+                {-1, -1, -1}
         };
-        return;
+
+        int[][] mask5 = {
+                {-1, -1, -1, -1, -1},
+                {-1, 0, 0, 0, -1},
+                {-1, 0, 16, 0, -1},
+                {-1, 0, 0, 0, -1},
+                {-1, -1, -1, -1, -1},
+        };
+
+        //goes through all values
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+
+                int rgbArray[] = new int[4];
+                int[][] neighborhood = new int[3][3]; // get 3-by-3 array of colors in neighborhood
+
+                //cycles through a 3x3 neighborhood
+                for (int a = 0; a < 3; a++) {
+                    for (int b = 0; b < 3; b++) {
+                        if (((i - 1 + a) >= 0 && (j - 1 + b) >= 0 && (i - 1 + a) < height && (j - 1 + b) < width)) {
+                            neighborhood[a][b] = getPixelArray(picture[i - 1 + a][j - 1 + b])[1]; //grabs the color of each pixel in the neighborhood
+                        }
+                    }
+                }
+                //averages sum from mask
+                // apply filter
+                int temp3 = 0, temp5 = 0;
+                for (int a = 0; a < 3; a++) {
+                    for (int b = 0; b < 3; b++) {
+                        temp3 += neighborhood[a][b] * mask3[a][b];
+                        //temp5 += neighborhood[a][b] * mask5[a][b];
+                    }
+                }
+
+                if (temp3 >= 100) {
+                    rgbArray[0] = 255;
+                    for (int l = 1; l < 4; l++) {
+                        rgbArray[l] = 255;
+                    }
+                } else {
+                    for (int l = 0; l < 4; l++) {
+                        rgbArray[l] = 0;
+                    }
+                }
+
+                //put the new averaged rgb colors into a temp picture
+                temp[i][j] = getPixels(rgbArray);
+            }
+        }
+        picture = temp; // puts temp back into original photo
+        resetPicture(); //rewrites the image
     }
 
     private void histogram_colors() {
-      drawHistogram();
-        return;
-    }
 
-    private void drawHistogram() {
-    }
+        int totalPixels = width*height;
+
+        //frequency counters for each color & 0-255 value
+        int[] redFreq = new int[256];
+        int[] greenFreq = new int[256];
+        int[] blueFreq = new int[256];
+
+        //Gathering/calculating histogram data (i.e. frequencies)
+        for(int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++)
+            {
+                int rgbArray[] = new int[4];
+
+                //get three ints for R, G and B
+                rgbArray = getPixelArray(picture[i][j]);
+
+                //current pixel RGB values
+                int r = rgbArray[1];
+                int g = rgbArray[2];
+                int b = rgbArray[3];
+
+                //increasing corresponding frequency values by 1.
+                redFreq[r]++;
+                greenFreq[g]++;
+                blueFreq[b]++;
+
+            }
+        }
+
+        //adjusting frequencies by dividing by 5 (as suggested by hunter in class)
+        for(int i =0; i< 255; i++)
+        {
+            redFreq[i] = redFreq[i]/5;
+            greenFreq[i] = greenFreq[i]/5;
+            blueFreq[i] = blueFreq[i]/5;
+        }
+
+        JFrame redFrame = new JFrame("Red");
+        redFrame.setSize(305, 600);
+        redFrame.setLocation(800, 0);
+        JFrame greenFrame = new JFrame("Green");
+        greenFrame.setSize(305, 600);
+        greenFrame.setLocation(1150, 0);
+        JFrame blueFrame = new JFrame("blue");
+        blueFrame.setSize(305, 600);
+        blueFrame.setLocation(1450, 0);
+
+        MyPanel redPanel = new MyPanel(redFreq);
+        MyPanel greenPanel = new MyPanel(greenFreq);
+        MyPanel bluePanel = new MyPanel(blueFreq);
+
+        redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
+        redFrame.setVisible(true);
+        greenFrame.getContentPane().add(greenPanel, BorderLayout.CENTER);
+        greenFrame.setVisible(true);
+        blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
+        blueFrame.setVisible(true);
+        start.setEnabled(true);
+}
+
 
     private void equalization() {
-        return;
+
+        //frequency counters for each color & 0-255 value
+        int[] redFreq = new int[256];
+        int[] greenFreq = new int[256];
+        int[] blueFreq = new int[256];
+        int[][] temp = new int[height][width];
+
+        int rgbArray[] = new int[4];
+
+        //Gathering/calculating histogram data (i.e. frequencies)
+        for(int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++)
+            {
+                //get three ints for R, G and B
+                rgbArray = getPixelArray(picture[i][j]);
+
+                //current pixel RGB values
+                int r = rgbArray[1];
+                int g = rgbArray[2];
+                int b = rgbArray[3];
+
+                //increasing corresponding frequency values by 1.
+                redFreq[r]++;
+                greenFreq[g]++;
+                blueFreq[b]++;
+
+            }
+        }
+        int minred = 1000;
+        int mingreen = 1000;
+        int minblue = 1000;
+        int cdfred = 0;
+        int cdfgreen = 0;
+        int cdfblue = 0;
+
+        for(int i = 0; i < redFreq.length; i++){
+            if(redFreq[i] < minred && redFreq[i] != 0){
+                minred = redFreq[i];
+            }
+            if(greenFreq[i] < mingreen && greenFreq[i] != 0){
+                mingreen = greenFreq[i];
+            }
+            if(blueFreq[i] < minblue && blueFreq[i] != 0){
+                minblue = blueFreq[i];
+            }
+        }
+
+        int equalizer = height*width;
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+
+        for(int i = 0; i < redFreq.length; i++) {
+            cdfred += redFreq[i];
+            cdfgreen += greenFreq[i];
+            cdfblue += blueFreq[i];
+
+            // TODO: (freq/total pixel) * 255;
+            red = (cdfred - minred)/(equalizer - minred) * 255;
+            green = (cdfgreen - mingreen)/(equalizer - mingreen) * 255;
+            blue = (cdfblue - minblue)/(equalizer - minblue) * 255;
+        }
+
+        for(int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++)
+            {
+                //get three ints for R, G and B
+                //puts average back into the array
+                rgbArray[1] = red;
+                rgbArray[2] = green;
+                rgbArray[3] = blue;
+
+                //put the new averaged rgb colors into a temp picture
+                temp[i][j] = getPixels(rgbArray);
+            }
+        }
+        picture = temp; // puts temp back into original photo
+        resetPicture(); //rewrites the image
     }
 
     private void color_tracker() {
-
+      // black and white photo
       resetPicture();
     }
 

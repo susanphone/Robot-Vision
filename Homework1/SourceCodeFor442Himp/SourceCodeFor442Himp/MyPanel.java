@@ -8,45 +8,50 @@ import javax.swing.*;
 
 public class MyPanel extends JPanel
 {
- 
-int startX, flag, startY, endX, endY;
+    int startX, flag, startY, endX, endY;
 
+    int[] freq;
     BufferedImage grid;
     Graphics2D gc;
     int rgb[];
     int max;
 
-	public MyPanel(int [] r, int m)
-	{
-	    rgb = r;
-	    max = m;
-	   startX = startY = 0;
-           endX = endY = 100;
- 	}
-
-     public void clear()
+    public MyPanel(int[] freq)
     {
-       grid = null;
-       repaint();
+        startX = startY = 0;
+        endX = endY = 100;
+        this.freq = freq;
+    }
+
+    public void clear()
+    {
+        grid = null;
+        repaint();
     }
     public void paintComponent(Graphics g)
-    {  
-         super.paintComponent(g);
-         Graphics2D g2 = (Graphics2D)g;
-         if(grid == null){
+    {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D)g;
+        if(grid == null){
             int w = this.getWidth();
             int h = this.getHeight();
             grid = (BufferedImage)(this.createImage(w,h));
             gc = grid.createGraphics();
 
-         }
-         g2.drawImage(grid, null, 0, 0);
-     }
-//    public void drawing()
-//    {
-//        gc.drawLine(startX, startY, endX, endY);
-//        repaint();
-//    }
+        }
+        g2.drawImage(grid, null, 0, 0);
+        this.drawing(freq);
+    }
+
+    public void drawing(int[]freq)
+    {
+        for (int i = 0; i < 255; i++) {
+            gc.drawLine(5+i, this.getHeight(), 5+i, this.getHeight()-freq[i]);
+//            gc.drawLine(startX, startY, endX, endY);
+            repaint();
+        }
+
+    }
 
     public void drawHistogram() {
 	    mapValues();
