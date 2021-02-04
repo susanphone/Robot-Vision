@@ -5,6 +5,8 @@
 package SourceCodeFor442Himp;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -333,7 +335,6 @@ class IMP implements MouseListener{
   }
   private void rotate() {
         int[][] temp = new int[width][height]; //temp with proper dimensions
-        resetPicture();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 temp[j][height - 1 - i] = picture[i][j]; //moves the pixel into the temp spot
@@ -343,7 +344,6 @@ class IMP implements MouseListener{
         width = height;
         height = h;
         picture = new int[height][width]; // resets the length of picture
-        resetPicture();
         picture = temp; // solidifies the temp spots
         resetPicture(); //rewrites the image
     }
@@ -595,9 +595,9 @@ class IMP implements MouseListener{
             cdfblue += blueFreq[i];
 
             // TODO: (freq/total pixel) * 255;
-            red = (cdfred - minred)/(equalizer - minred) * 255;
-            green = (cdfgreen - mingreen)/(equalizer - mingreen) * 255;
-            blue = (cdfblue - minblue)/(equalizer - minblue) * 255;
+            red = (cdfred)/(equalizer - minred) * 255;
+            green = (cdfgreen)/(equalizer - mingreen) * 255;
+            blue = (cdfblue)/(equalizer - minblue) * 255;
         }
 
         for(int i = 0; i < height; i++) {
@@ -617,9 +617,48 @@ class IMP implements MouseListener{
         resetPicture(); //rewrites the image
     }
 
+    // TODO: Add this function
     private void color_tracker() {
-      // black and white photo
-      resetPicture();
+        int rL = 0; int rH = 130;
+        int gL = 0; int gH = 200;
+        int bL = 180; int bH = 255;
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3,2));
+        JSlider rHSlider = new JSlider(0, 255);
+        JSlider gHSlider = new JSlider(0, 255);
+        JSlider bHSlider = new JSlider(0, 255);
+        JSlider rLSlider = new JSlider(0, 255);
+        JSlider gLSlider = new JSlider(0, 255);
+        JSlider bLSlider = new JSlider(0, 255);
+        rHSlider.setName("rh");
+        rLSlider.setName("rl");
+        gHSlider.setName("gh");
+        gLSlider.setName("gl");
+        bHSlider.setName("bh");
+        bLSlider.setName("bl");
+        rHSlider.addChangeListener((ChangeListener) this);
+        rLSlider.addChangeListener((ChangeListener) this);
+        gHSlider.addChangeListener((ChangeListener) this);
+        gLSlider.addChangeListener((ChangeListener) this);
+        bHSlider.addChangeListener((ChangeListener) this);
+        bLSlider.addChangeListener((ChangeListener) this);
+        panel.add(rLSlider);
+        panel.add(rHSlider);
+        panel.add(gLSlider);
+        panel.add(gHSlider);
+        panel.add(bLSlider);
+        panel.add(bHSlider);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Tracker", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        System.out.println(result);
+
+        System.out.println(rL + ", " + rH + " :Green: " + gL + ", " + gH + " :Blue: " + bL + ", " + bH);
+
+
+
+
+
+        resetPicture();
     }
 
 
@@ -646,6 +685,34 @@ class IMP implements MouseListener{
    public void mousePressed(MouseEvent m){}
     @Override
    public void mouseReleased(MouseEvent m){}
+
+   // TODO: Add this function
+   @Override
+   public void stateChange(ChangeEvent ce) {
+       JSlider source = (JSlider)ce.getSource();
+       if (!source.getValueIsAdjusting())
+      {
+          if(source.getName().equals("rl")) {
+              int rL = source.getValue();
+              System.out.println("rL " + rL);
+          } else if (source.getName().equals("rh")) {
+              int rH = source.getValue();
+              System.out.println("rH " + rH);
+          } else if (source.getName().equals("gl")) {
+              int gL = source.getValue();
+              System.out.println("gL " + gL);
+          } else if (source.getName().equals("gh")) {
+              int gH = source.getValue();
+              System.out.println("gH " + gH);
+          } else if (source.getName().equals("bl")) {
+              int bL = source.getValue();
+              System.out.println("bL " + bL);
+          } else if (source.getName().equals("bh")) {
+              int bH = source.getValue();
+              System.out.println("bH " + bH);
+          }
+      }
+   }
    
    public static void main(String [] args)
    {
