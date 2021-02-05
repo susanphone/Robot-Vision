@@ -9,16 +9,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.awt.image.PixelGrabber;
 import java.awt.image.MemoryImageSource;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.awt.image.PixelGrabber;
+import java.io.File;
 import java.util.prefs.Preferences;
-import java.util.*;
 
 
-class IMP implements MouseListener{
+class IMP implements MouseListener, ChangeListener {
    JFrame frame;
    JPanel mp;
    JButton start;
@@ -327,24 +324,44 @@ class IMP implements MouseListener{
           rgbArray = getPixelArray(picture[i][j]);
          
         
-           rgbArray[1] = 0;
-           //take three ints for R, G, B and put them back into a single int
+          rgbArray[1] = 0;
+          //take three ints for R, G, B and put them back into a single int
            picture[i][j] = getPixels(rgbArray);
         } 
      resetPicture();
   }
+    private void removePicture(){
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++) {
+                int rgbArray[] = new int[4];
+
+                //get three ints for R, G and B
+                rgbArray = getPixelArray(picture[i][j]);
+
+                for(int l = 1; l < 4; l++) {
+                    rgbArray[l] = 0;
+                }
+                //take three ints for R, G, B and put them back into a single int
+                picture[i][j] = getPixels(rgbArray);
+            }
+        resetPicture();
+
+    }
+
   private void rotate() {
-        int[][] temp = new int[width][height]; //temp with proper dimensions
+        int[][] tempPic = new int[width][height]; //tempPic using proper dimensions
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                temp[j][height - 1 - i] = picture[i][j]; //moves the pixel into the temp spot
+                tempPic[j][height - 1 - i] = picture[i][j]; //moves the pixel into the tempPic placement
             }
         }
-        int h = width; //swap height and width
+
+        removePicture();
+        int ht = width; //swap height with width and vice versa
         width = height;
-        height = h;
+        height = ht;
         picture = new int[height][width]; // resets the length of picture
-        picture = temp; // solidifies the temp spots
+        picture = tempPic; // move picture to the tempPic spot
         resetPicture(); //rewrites the image
     }
     private void luminosity() {
@@ -368,7 +385,7 @@ class IMP implements MouseListener{
     }
 
     private void blur() {
-        int[][] temp = new int[height][width]; //temp with proper dimensions
+        int[][] tempPic = new int[height][width]; //tempPic using proper dimensions
 
         //goes through all values
         for (int i = 0; i < height; i++) {
@@ -379,42 +396,43 @@ class IMP implements MouseListener{
                 //extracts rgb colors
                 rgbArray = getPixelArray(picture[i][j]);
 
-                int sumr = 0;
-                int sumg = 0;
-                int sumb = 0;
+                int sumR = 0;
+                int sumG = 0;
+                int sumB = 0;
                 //cycles through a 3x3 mask
-                for (int a = -1; a <= 1; a++) {
-                    for (int b = -1; b <= 1; b++) {
-                        if (((i + a) >= 0 && (j + b) >= 0 && (i + a) < height && (b + j) < width)) {
-                            rgbArray = getPixelArray(picture[i + a][j + b]); //grabs the colors for each of the pixels in the mask
-                            sumr += rgbArray[1]; //sums red
-                            sumg += rgbArray[2]; //sums green
-                            sumb += rgbArray[3]; //sums blue
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1; y <= 1; y++) {
+                        if (((i + x) >= 0 && (j + y) >= 0 && (i + x) < height && (y + j) < width)) {
+                            rgbArray = getPixelArray(picture[i + x][j + y]); //grabs the colors for each of the pixels
+                            // sums red, green, and blue
+                            sumR += rgbArray[1];
+                            sumG += rgbArray[2];
+                            sumB += rgbArray[3];
                         }
                     }
                 }
                 //averages sum from mask
-                int red = (sumr /9);
-                int green = (sumg /9);
-                int blue = (sumb /9);
+                int red = (sumR /9);
+                int green = (sumG /9);
+                int blue = (sumB /9);
 
-                //puts average back into the array
+                //puts average back in array
                 rgbArray[1] = red;
                 rgbArray[2] = green;
                 rgbArray[3] = blue;
 
-                //put the new averaged rgb colors into a temp picture
-                temp[i][j] = getPixels(rgbArray);;
+                //put the new averaged rgb colors in tempPic
+                tempPic[i][j] = getPixels(rgbArray);
             }
         }
-        picture = temp; // puts temp back into original photo
+        picture = tempPic; // tempPic goes back into original photo
         resetPicture(); //rewrites the image
     }
 
     private void edge_detection() {
         luminosity();
 
-        int[][] temp = new int[height][width]; //temp with proper dimensions
+        int[][] tempPic = new int[height][width]; //tempPic using proper dimensions
         int[][] mask3 = {
                 {-1, -1, -1},
                 {-1, 8, -1},
@@ -429,47 +447,47 @@ class IMP implements MouseListener{
                 {-1, -1, -1, -1, -1},
         };
 
-        //goes through all values
+        //go through all values
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
 
                 int rgbArray[] = new int[4];
-                int[][] neighborhood = new int[3][3]; // get 3-by-3 array of colors in neighborhood
+                int[][] surroundingArea = new int[3][3]; // get 3x3 array of colors in surrounding area
 
-                //cycles through a 3x3 neighborhood
+                //cycles through a 3x3 surroundingArea
                 for (int a = 0; a < 3; a++) {
                     for (int b = 0; b < 3; b++) {
                         if (((i - 1 + a) >= 0 && (j - 1 + b) >= 0 && (i - 1 + a) < height && (j - 1 + b) < width)) {
-                            neighborhood[a][b] = getPixelArray(picture[i - 1 + a][j - 1 + b])[1]; //grabs the color of each pixel in the neighborhood
+                            surroundingArea[a][b] = getPixelArray(picture[i - 1 + a][j - 1 + b])[1]; //grabs the color of each pixel in the surroundingArea
                         }
                     }
                 }
-                //averages sum from mask
-                // apply filter
-                int temp3 = 0, temp5 = 0;
+                //average the sum from mask and filter
+                int temp3Mask = 0, temp5Mask = 0;
                 for (int a = 0; a < 3; a++) {
                     for (int b = 0; b < 3; b++) {
-                        temp3 += neighborhood[a][b] * mask3[a][b];
-                        //temp5 += neighborhood[a][b] * mask5[a][b];
+                        temp3Mask += surroundingArea[a][b] * mask3[a][b];
+                        temp5Mask += surroundingArea[a][b] * mask5[a][b];
                     }
                 }
 
-                if (temp3 >= 100) {
+                if (temp3Mask >= 100) {
                     rgbArray[0] = 255;
-                    for (int l = 1; l < 4; l++) {
-                        rgbArray[l] = 255;
+                    for (int m = 1; m < 4; m++) {
+                        rgbArray[m] = 255;
                     }
                 } else {
-                    for (int l = 0; l < 4; l++) {
-                        rgbArray[l] = 0;
+                    for (int m = 0; m < 4; m++) {
+                        rgbArray[m] = 0;
                     }
                 }
 
-                //put the new averaged rgb colors into a temp picture
-                temp[i][j] = getPixels(rgbArray);
+
+                //new average rgb colors are put into tempPic
+                tempPic[i][j] = getPixels(rgbArray);
             }
         }
-        picture = temp; // puts temp back into original photo
+        picture = tempPic; // puts tempPic back into original photo
         resetPicture(); //rewrites the image
     }
 
@@ -477,12 +495,12 @@ class IMP implements MouseListener{
 
         int totalPixels = width*height;
 
-        //frequency counters for each color & 0-255 value
-        int[] redFreq = new int[256];
-        int[] greenFreq = new int[256];
-        int[] blueFreq = new int[256];
+        //each color has a frequency counter from 0-255 value
+        int[] redFrequency = new int[256];
+        int[] greenFrequency = new int[256];
+        int[] blueFrequency = new int[256];
 
-        //Gathering/calculating histogram data (i.e. frequencies)
+        //Gather and calculate frequency data
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < width; j++)
             {
@@ -497,19 +515,19 @@ class IMP implements MouseListener{
                 int b = rgbArray[3];
 
                 //increasing corresponding frequency values by 1.
-                redFreq[r]++;
-                greenFreq[g]++;
-                blueFreq[b]++;
+                redFrequency[r]++;
+                greenFrequency[g]++;
+                blueFrequency[b]++;
 
             }
         }
 
-        //adjusting frequencies by dividing by 5 (as suggested by hunter in class)
+        //adjust each frequency by dividing by 5 (class suggestion)
         for(int i =0; i< 255; i++)
         {
-            redFreq[i] = redFreq[i]/5;
-            greenFreq[i] = greenFreq[i]/5;
-            blueFreq[i] = blueFreq[i]/5;
+            redFrequency[i] = redFrequency[i]/5;
+            greenFrequency[i] = greenFrequency[i]/5;
+            blueFrequency[i] = blueFrequency[i]/5;
         }
 
         JFrame redFrame = new JFrame("Red");
@@ -522,9 +540,9 @@ class IMP implements MouseListener{
         blueFrame.setSize(305, 600);
         blueFrame.setLocation(1450, 0);
 
-        MyPanel redPanel = new MyPanel(redFreq);
-        MyPanel greenPanel = new MyPanel(greenFreq);
-        MyPanel bluePanel = new MyPanel(blueFreq);
+        MyPanel redPanel = new MyPanel(redFrequency);
+        MyPanel greenPanel = new MyPanel(greenFrequency);
+        MyPanel bluePanel = new MyPanel(blueFrequency);
 
         redFrame.getContentPane().add(redPanel, BorderLayout.CENTER);
         redFrame.setVisible(true);
@@ -538,86 +556,95 @@ class IMP implements MouseListener{
 
     private void equalization() {
 
-        //frequency counters for each color & 0-255 value
+       //a frequency counter for each color & 0-255 value
         int[] redFreq = new int[256];
         int[] greenFreq = new int[256];
         int[] blueFreq = new int[256];
-        int[][] temp = new int[height][width];
+        int[][] tempPic = new int[height][width];
 
         int rgbArray[] = new int[4];
 
-        //Gathering/calculating histogram data (i.e. frequencies)
+        //data for the histogram
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < width; j++)
             {
-                //get three ints for R, G and B
                 rgbArray = getPixelArray(picture[i][j]);
 
-                //current pixel RGB values
-                int r = rgbArray[1];
-                int g = rgbArray[2];
-                int b = rgbArray[3];
-
-                //increasing corresponding frequency values by 1.
-                redFreq[r]++;
-                greenFreq[g]++;
-                blueFreq[b]++;
-
+                //increase frequency values
+                redFreq[rgbArray[1]]++;
+                greenFreq[rgbArray[2]]++;
+                blueFreq[rgbArray[3]]++;
             }
         }
-        int minred = 1000;
-        int mingreen = 1000;
-        int minblue = 1000;
-        int cdfred = 0;
-        int cdfgreen = 0;
-        int cdfblue = 0;
+        int minRed = 1000;
+        int minGreen = 1000;
+        int minBlue = 1000;
+
+        int cDfRed = 0;
+        int cDfGreen = 0;
+        int cDfBlue = 0;
 
         for(int i = 0; i < redFreq.length; i++){
-            if(redFreq[i] < minred && redFreq[i] != 0){
-                minred = redFreq[i];
+            if(redFreq[i] < minRed && redFreq[i] != 0){
+                minRed = redFreq[i];
             }
-            if(greenFreq[i] < mingreen && greenFreq[i] != 0){
-                mingreen = greenFreq[i];
+            if(greenFreq[i] < minGreen && greenFreq[i] != 0){
+                minGreen = greenFreq[i];
             }
-            if(blueFreq[i] < minblue && blueFreq[i] != 0){
-                minblue = blueFreq[i];
+            if(blueFreq[i] < minBlue && blueFreq[i] != 0){
+                minBlue = blueFreq[i];
             }
         }
 
-        int equalizer = height*width;
+        int equalize = height*width;
         int red = 0;
         int green = 0;
         int blue = 0;
+        int[] redArray = new int[256];
+        int[] greenArray = new int[256];
+        int[] blueArray = new int[256];
 
         for(int i = 0; i < redFreq.length; i++) {
-            cdfred += redFreq[i];
-            cdfgreen += greenFreq[i];
-            cdfblue += blueFreq[i];
+            cDfRed += redFreq[i];
+            cDfGreen += greenFreq[i];
+            cDfBlue += blueFreq[i];
 
-            // TODO: (freq/total pixel) * 255;
-            red = (cdfred)/(equalizer - minred) * 255;
-            green = (cdfgreen)/(equalizer - mingreen) * 255;
-            blue = (cdfblue)/(equalizer - minblue) * 255;
+            // do the math
+            red = 255 * (cDfRed - minRed)/(equalize - minRed);
+            green = 255 * (cDfGreen - minGreen)/(equalize - minGreen);
+            blue = 255 * (cDfBlue - minBlue)/(equalize - minBlue);
+
+            redArray[i] = Math.round(red);
+            blueArray[i] = Math.round(blue);
+            greenArray[i] = Math.round(green);
         }
 
+        // print out the numbers
+        System.out.println();
+        int rgb[] = new int[4];
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < width; j++)
             {
-                //get three ints for R, G and B
-                //puts average back into the array
-                rgbArray[1] = red;
-                rgbArray[2] = green;
-                rgbArray[3] = blue;
+                rgb = getPixelArray(picture[i][j]);
 
-                //put the new averaged rgb colors into a temp picture
-                temp[i][j] = getPixels(rgbArray);
+                System.out.println(rgb[2] + " " + rgb[3]);
+                System.out.println(greenArray[rgb[2]] + " " + blueArray[rgb[3]]);
+
+                //average goes back into array
+                rgbArray[0] = 255;
+                rgbArray[1] = redArray[rgb[1]];
+                rgbArray[2] = greenArray[rgb[2]];
+                rgbArray[3] = blueArray[rgb[3]];
+
+                //new averaged rgb colors goes into a tempPic
+                tempPic[i][j] = getPixels(rgbArray);;
             }
         }
-        picture = temp; // puts temp back into original photo
+        picture = tempPic; // tempPic goes back into original picture
         resetPicture(); //rewrites the image
+
     }
 
-    // TODO: Add this function
     private void color_tracker() {
         int rL = 0; int rH = 130;
         int gL = 0; int gH = 200;
@@ -636,12 +663,12 @@ class IMP implements MouseListener{
         gLSlider.setName("gl");
         bHSlider.setName("bh");
         bLSlider.setName("bl");
-        rHSlider.addChangeListener((ChangeListener) this);
-        rLSlider.addChangeListener((ChangeListener) this);
-        gHSlider.addChangeListener((ChangeListener) this);
-        gLSlider.addChangeListener((ChangeListener) this);
-        bHSlider.addChangeListener((ChangeListener) this);
-        bLSlider.addChangeListener((ChangeListener) this);
+        rHSlider.addChangeListener(this);
+        rLSlider.addChangeListener(this);
+        gHSlider.addChangeListener(this);
+        gLSlider.addChangeListener(this);
+        bHSlider.addChangeListener(this);
+        bLSlider.addChangeListener(this);
         panel.add(rLSlider);
         panel.add(rHSlider);
         panel.add(gLSlider);
@@ -654,17 +681,10 @@ class IMP implements MouseListener{
 
         System.out.println(rL + ", " + rH + " :Green: " + gL + ", " + gH + " :Blue: " + bL + ", " + bH);
 
-
-
-
-
         resetPicture();
     }
 
-
-  
-  
-  private void quit()
+    private void quit()
   {  
      System.exit(0);
   }
@@ -686,37 +706,37 @@ class IMP implements MouseListener{
     @Override
    public void mouseReleased(MouseEvent m){}
 
-   // TODO: Add this function
-   @Override
-   public void stateChange(ChangeEvent ce) {
-       JSlider source = (JSlider)ce.getSource();
-       if (!source.getValueIsAdjusting())
-      {
-          if(source.getName().equals("rl")) {
-              int rL = source.getValue();
-              System.out.println("rL " + rL);
-          } else if (source.getName().equals("rh")) {
-              int rH = source.getValue();
-              System.out.println("rH " + rH);
-          } else if (source.getName().equals("gl")) {
-              int gL = source.getValue();
-              System.out.println("gL " + gL);
-          } else if (source.getName().equals("gh")) {
-              int gH = source.getValue();
-              System.out.println("gH " + gH);
-          } else if (source.getName().equals("bl")) {
-              int bL = source.getValue();
-              System.out.println("bL " + bL);
-          } else if (source.getName().equals("bh")) {
-              int bH = source.getValue();
-              System.out.println("bH " + bH);
-          }
-      }
-   }
+    @Override
+    public void stateChanged(ChangeEvent ce) {
+        JSlider source = (JSlider)ce.getSource();
+        if (!source.getValueIsAdjusting())
+        {
+            if(source.getName().equals("rl")) {
+                int rL = source.getValue();
+                System.out.println("rL " + rL);
+            } else if (source.getName().equals("rh")) {
+                int rH = source.getValue();
+                System.out.println("rH " + rH);
+            } else if (source.getName().equals("gl")) {
+                int gL = source.getValue();
+                System.out.println("gL " + gL);
+            } else if (source.getName().equals("gh")) {
+                int gH = source.getValue();
+                System.out.println("gH " + gH);
+            } else if (source.getName().equals("bl")) {
+                int bL = source.getValue();
+                System.out.println("bL " + bL);
+            } else if (source.getName().equals("bh")) {
+                int bH = source.getValue();
+                System.out.println("bH " + bH);
+            }
+        }
+    }
+
    
    public static void main(String [] args)
    {
       IMP imp = new IMP();
    }
- 
+
 }
