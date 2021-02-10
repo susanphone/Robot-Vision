@@ -1,18 +1,22 @@
+/*
+Susan McCartney
+February 5, 2021
+CSCI 442 - Assignment 1
+ */
 package SourceCodeFor442Himp;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class MyPanel extends JPanel
 {
-    int startX, flag, startY, endX, endY;
+    int startX, startY, endX, endY;
 
     int[] freq;
     BufferedImage grid;
     Graphics2D gc;
-    int rgb[];
+    int[] rgb;
     int max;
 
     public MyPanel(int[] freq)
@@ -46,8 +50,7 @@ public class MyPanel extends JPanel
     {
         for (int i = 0; i < 255; i++) {
             gc.drawLine(5+i, this.getHeight(), 5+i, this.getHeight()-freq[i]);
-//            gc.drawLine(startX, startY, endX, endY);
-            repaint();
+            clear();
         }
 
     }
@@ -67,8 +70,5 @@ public class MyPanel extends JPanel
 	        rgb[i] = (int)(offset * rgb[i]);
         }
     }
-
-
-
 
 }

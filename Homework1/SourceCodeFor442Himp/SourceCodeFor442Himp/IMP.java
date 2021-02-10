@@ -2,6 +2,12 @@
  *Hunter Lloyd
  * Copyrite.......I wrote, ask permission if you want to use it outside of class. 
  */
+
+/*
+Susan McCartney
+February 5, 2021
+CSCI 442 - Assignment 1
+ */
 package SourceCodeFor442Himp;
 
 import javax.swing.*;
@@ -102,7 +108,6 @@ class IMP implements MouseListener, ChangeListener {
   private JMenu getFunctions()
   {
      JMenu fun = new JMenu("Functions");
-
       JMenuItem firstItem = new JMenuItem("MyExample - fun1 method");
       JMenuItem rotateItem = new JMenuItem("Rotate 90 Degrees");
       JMenuItem grayscaleItem = new JMenuItem("Luminosity Grayscale");
@@ -163,6 +168,18 @@ class IMP implements MouseListener, ChangeListener {
           }
       });
 
+//      TODO: Add for quiz **************************
+      JMenuItem firstQuizItem = new JMenuItem("Quiz One");
+      firstQuizItem.addActionListener((ActionEvent evt) -> {
+          firstQuiz();
+      });
+      JMenuItem secondQuizItem = new JMenuItem("Quiz Two");
+      secondQuizItem.addActionListener((ActionEvent evt) -> {
+          secondQuiz();
+      });
+      fun.add(firstQuizItem);
+      fun.add(secondQuizItem);
+// TODO: *********************************
 
       fun.add(firstItem);
       fun.add(rotateItem);
@@ -313,41 +330,20 @@ class IMP implements MouseListener, ChangeListener {
     * After you make changes and do your calculations to your pixel values the getPixels method will put the 4 values in your ARGB array back into a single
     * integer value so you can give it back to the program and display the new picture. 
     */
-  private void fun1()
-  {
-     
+  private void fun1() {
     for(int i=0; i<height; i++)
        for(int j=0; j<width; j++)
        {   
           int rgbArray[] = new int[4];
           //get three ints for R, G and B
           rgbArray = getPixelArray(picture[i][j]);
-         
-        
+
           rgbArray[1] = 0;
           //take three ints for R, G, B and put them back into a single int
            picture[i][j] = getPixels(rgbArray);
         } 
      resetPicture();
   }
-    private void removePicture(){
-        for (int i = 0; i < height; i++)
-            for (int j = 0; j < width; j++) {
-                int rgbArray[] = new int[4];
-
-                //get three ints for R, G and B
-                rgbArray = getPixelArray(picture[i][j]);
-
-                for(int l = 1; l < 4; l++) {
-                    rgbArray[l] = 0;
-                }
-                //take three ints for R, G, B and put them back into a single int
-                picture[i][j] = getPixels(rgbArray);
-            }
-        resetPicture();
-
-    }
-
   private void rotate() {
         int[][] tempPic = new int[width][height]; //tempPic using proper dimensions
         for (int i = 0; i < height; i++) {
@@ -356,12 +352,12 @@ class IMP implements MouseListener, ChangeListener {
             }
         }
 
-        removePicture();
         int ht = width; //swap height with width and vice versa
         width = height;
         height = ht;
         picture = new int[height][width]; // resets the length of picture
         picture = tempPic; // move picture to the tempPic spot
+
         resetPicture(); //rewrites the image
     }
     private void luminosity() {
@@ -399,11 +395,13 @@ class IMP implements MouseListener, ChangeListener {
                 int sumR = 0;
                 int sumG = 0;
                 int sumB = 0;
+
                 //cycles through a 3x3 mask
                 for (int x = -1; x <= 1; x++) {
                     for (int y = -1; y <= 1; y++) {
                         if (((i + x) >= 0 && (j + y) >= 0 && (i + x) < height && (y + j) < width)) {
                             rgbArray = getPixelArray(picture[i + x][j + y]); //grabs the colors for each of the pixels
+
                             // sums red, green, and blue
                             sumR += rgbArray[1];
                             sumG += rgbArray[2];
@@ -433,6 +431,7 @@ class IMP implements MouseListener, ChangeListener {
         luminosity();
 
         int[][] tempPic = new int[height][width]; //tempPic using proper dimensions
+
         int[][] mask3 = {
                 {-1, -1, -1},
                 {-1, 8, -1},
@@ -482,12 +481,12 @@ class IMP implements MouseListener, ChangeListener {
                     }
                 }
 
-
                 //new average rgb colors are put into tempPic
                 tempPic[i][j] = getPixels(rgbArray);
             }
         }
         picture = tempPic; // puts tempPic back into original photo
+
         resetPicture(); //rewrites the image
     }
 
@@ -551,6 +550,8 @@ class IMP implements MouseListener, ChangeListener {
         blueFrame.getContentPane().add(bluePanel, BorderLayout.CENTER);
         blueFrame.setVisible(true);
         start.setEnabled(true);
+
+        resetPicture();
 }
 
 
@@ -641,48 +642,98 @@ class IMP implements MouseListener, ChangeListener {
             }
         }
         picture = tempPic; // tempPic goes back into original picture
+
         resetPicture(); //rewrites the image
 
     }
 
     private void color_tracker() {
-        int rL = 0; int rH = 130;
-        int gL = 0; int gH = 200;
-        int bL = 180; int bH = 255;
+      // from lecture video
+        int rL, rH, gL, gH, bL, bH;
+
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(3,2));
+
         JSlider rHSlider = new JSlider(0, 255);
         JSlider gHSlider = new JSlider(0, 255);
         JSlider bHSlider = new JSlider(0, 255);
         JSlider rLSlider = new JSlider(0, 255);
         JSlider gLSlider = new JSlider(0, 255);
         JSlider bLSlider = new JSlider(0, 255);
+
         rHSlider.setName("rh");
         rLSlider.setName("rl");
         gHSlider.setName("gh");
         gLSlider.setName("gl");
         bHSlider.setName("bh");
         bLSlider.setName("bl");
+
         rHSlider.addChangeListener(this);
         rLSlider.addChangeListener(this);
         gHSlider.addChangeListener(this);
         gLSlider.addChangeListener(this);
         bHSlider.addChangeListener(this);
         bLSlider.addChangeListener(this);
+
         panel.add(rLSlider);
         panel.add(rHSlider);
         panel.add(gLSlider);
         panel.add(gHSlider);
         panel.add(bLSlider);
         panel.add(bHSlider);
+
         int result = JOptionPane.showConfirmDialog(null, panel, "Tracker", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        System.out.println(result);
+        // update color values
+        rH = rHSlider.getValue();
+        rL = rLSlider.getValue();
+        gH = gHSlider.getValue();
+        gL = gLSlider.getValue();
+        bH = bHSlider.getValue();
+        bL = bLSlider.getValue();
 
-        System.out.println(rL + ", " + rH + " :Green: " + gL + ", " + gH + " :Blue: " + bL + ", " + bH);
+        System.out.println(result);
+        System.out.println("Red: " + rL + ", " + rH + " : Green: " + gL + ", " + gH + " : Blue: " + bL + ", " + bH);
+
+        for(int i=0; i<height; i++) {
+            for (int j = 0; j < width; j++) {
+                boolean isMatch = false;
+                int rgbArray[] = new int[4];
+
+                //get three ints for R, G and B
+                rgbArray = getPixelArray(picture[i][j]);
+                //if in red range
+                if (rgbArray[1] >= rL && rgbArray[1] <= rH) {
+                    //and if in green range
+                    if (rgbArray[2] >= gL && rgbArray[2] <= gH) {
+                        //and if in blue range
+                        if (rgbArray[3] >= bL && rgbArray[3] <= bH) {
+                            isMatch = true;
+                            //turn matching colors white
+                            rgbArray[1] = 255;
+                            rgbArray[2] = 255;
+                            rgbArray[3] = 255;
+                        }
+                    }
+                }
+
+                if(!isMatch){
+                    rgbArray[1] = 0;
+                    rgbArray[2] = 0;
+                    rgbArray[3] = 0;
+                }
+                rgbArray[0] = 255;
+                picture[i][j] = getPixels(rgbArray);
+            }
+        }
 
         resetPicture();
     }
+
+//    TODO: Add for quiz ****************************************
+    public void firstQuiz() {System.out.println("one");}
+    public void secondQuiz() {System.out.println("two");}
+//    TODO: *******************************************************
 
     private void quit()
   {  
@@ -705,7 +756,6 @@ class IMP implements MouseListener, ChangeListener {
    public void mousePressed(MouseEvent m){}
     @Override
    public void mouseReleased(MouseEvent m){}
-
     @Override
     public void stateChanged(ChangeEvent ce) {
         JSlider source = (JSlider)ce.getSource();
