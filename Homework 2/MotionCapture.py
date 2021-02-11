@@ -2,7 +2,6 @@ import random as rng
 import argparse
 import cv2 as cv
 import numpy as np
-from numpy.core.shape_base import _accumulate
 
 cap = cv.VideoCapture(0)
 status, frame = cap.read()
