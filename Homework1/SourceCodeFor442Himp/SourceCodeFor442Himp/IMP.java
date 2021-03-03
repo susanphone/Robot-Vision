@@ -168,18 +168,23 @@ class IMP implements MouseListener, ChangeListener {
           }
       });
 
-//      TODO: Add for quiz **************************
       JMenuItem firstQuizItem = new JMenuItem("Quiz One");
-      firstQuizItem.addActionListener((ActionEvent evt) -> {
+      firstQuizItem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
           firstQuiz();
-      });
+      }});
+
       JMenuItem secondQuizItem = new JMenuItem("Quiz Two");
-      secondQuizItem.addActionListener((ActionEvent evt) -> {
-          secondQuiz();
+      secondQuizItem.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+              secondQuiz();
+
+          }
       });
       fun.add(firstQuizItem);
       fun.add(secondQuizItem);
-// TODO: *********************************
 
       fun.add(firstItem);
       fun.add(rotateItem);
@@ -331,19 +336,17 @@ class IMP implements MouseListener, ChangeListener {
     * integer value so you can give it back to the program and display the new picture. 
     */
   private void fun1() {
-    for(int i=0; i<height; i++)
-       for(int j=0; j<width; j++)
-       {   
-          int rgbArray[] = new int[4];
-          //get three ints for R, G and B
-          rgbArray = getPixelArray(picture[i][j]);
+      for(int i=0; i<height; i++) {
+          for(int j=0; j<width; j++) {
+              int rgbArray[] = new int[4];
+              //get three ints for R, G and B
+              rgbArray = getPixelArray(picture[i][j+3]);
 
-          rgbArray[1] = 0;
-          //take three ints for R, G, B and put them back into a single int
-           picture[i][j] = getPixels(rgbArray);
-        } 
-     resetPicture();
-  }
+              //take three ints for R, G, B and put them back into a single int
+              picture[i][j+3] = getPixels(rgbArray);
+          }}
+      resetPicture();
+      System.out.println("one");}
   private void rotate() {
         int[][] tempPic = new int[width][height]; //tempPic using proper dimensions
         for (int i = 0; i < height; i++) {
@@ -470,14 +473,14 @@ class IMP implements MouseListener, ChangeListener {
                     }
                 }
 
-                if (temp3Mask >= 100) {
-                    rgbArray[0] = 255;
+                if (temp5Mask > 200) {
+                    rgbArray[0] = 0;
                     for (int m = 1; m < 4; m++) {
-                        rgbArray[m] = 255;
+                        rgbArray[m] = 0;
                     }
                 } else {
                     for (int m = 0; m < 4; m++) {
-                        rgbArray[m] = 0;
+                        rgbArray[m] = 255;
                     }
                 }
 
@@ -553,7 +556,6 @@ class IMP implements MouseListener, ChangeListener {
 
         resetPicture();
 }
-
 
     private void equalization() {
 
@@ -730,10 +732,11 @@ class IMP implements MouseListener, ChangeListener {
         resetPicture();
     }
 
-//    TODO: Add for quiz ****************************************
-    public void firstQuiz() {System.out.println("one");}
-    public void secondQuiz() {System.out.println("two");}
-//    TODO: *******************************************************
+    public void firstQuiz() {
+      System.out.println("one");}
+
+    public void secondQuiz() {
+      System.out.println("two");}
 
     private void quit()
   {  
