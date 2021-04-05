@@ -1,21 +1,13 @@
-package com.example.a442dayone;
+package com.example.FacialRecognitionAssignment;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.Locale;
 
@@ -48,7 +40,7 @@ public class TTS extends Thread implements TextToSpeech.OnInitListener {
         handler = new Handler() {
             public void handleMessage(Message msg){
                 String Response = msg.getData().getString("LM");
-                speakOut("Hello");
+                speakOut(Response);
                 Toast.makeText(con, "Talking... " + Response, Toast.LENGTH_LONG).show();
             }
         };

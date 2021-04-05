@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.a442dayone">
+    package="com.example.FacialRecognitionAssignment">
 
     <application
         android:allowBackup="true"
@@ -9,9 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.442DayOne">
-        <activity android:name=".SecondActivity"></activity>
-        <activity android:name=".TalkActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.FacialRecognitionAssignment.FacialRecognition"></activity>
+        <activity android:name="com.example.FacialRecognitionAssignment.SecondActivity" />
+        <activity android:name="com.example.FacialRecognitionAssignment.TalkActivity" />
+        <activity android:name="com.example.FacialRecognitionAssignment.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

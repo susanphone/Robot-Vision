@@ -1,4 +1,4 @@
-package com.example.a442dayone;
+package com.example.FacialRecognitionAssignment;
 
 import androidx.appcompat.app.AppCompatActivity;
 

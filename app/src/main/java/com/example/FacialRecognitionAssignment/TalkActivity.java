@@ -1,16 +1,16 @@
-package com.example.a442dayone;
+package com.example.FacialRecognitionAssignment;
 
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class TalkActivity extends AppCompatActivity implements View.OnClickListener {
     private TTS tts;
     String msg;
+    int count = 0;
 //    EditText et;
 
     @Override
@@ -34,7 +34,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.talkBtn:
                 Bundle b = new Bundle();
-                String text = "Hello"; //= et.getText().toString();
+                String text = "There are " + count +  " faces in this picture"; //= et.getText().toString();
                 b.putString("LM", text);
                 if (tts.handler != null) {
                     Message msg = tts.handler.obtainMessage(0);
