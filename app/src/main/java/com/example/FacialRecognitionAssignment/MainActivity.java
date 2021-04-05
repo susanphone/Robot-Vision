@@ -59,11 +59,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 fac = faces;
                                 if (fac == null)
                                     Log.v("***DRAW***", "Null");
-                                FaceView overlay = (FaceView) findViewById(R.id.faceView);
-                                overlay.setContent(bitmap, fac);
+                            else {FaceView overlay = (FaceView) findViewById(R.id.faceView);
+                                overlay.setContent(bitmap, fac);}
                                 //Success
                                 tv.setText(faces.size() + "Faces Seen");
-                                startSecondActivity();
+//                                startSecondActivity();
                             }
                         }).addOnFailureListener(new OnFailureListener(){
                     @Override
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId()){
             case R.id.talkButton:
                 FaceDetector detector = FaceDetection.getClient();
-                InputStream stream = getResources().openRawResource(R.raw.image02);
+                InputStream stream = getResources().openRawResource(R.raw.image01);
                 Bitmap bitmap = BitmapFactory.decodeStream(stream);
                 InputImage image = InputImage.fromBitmap(bitmap, 0);
 
@@ -118,15 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     ;
 
-//    public void startFacialRecognition() {
-//        Intent recognizeActivity = new Intent(this, FacialRecognition.class);
-//        startFacialRecognition(recognizeActivity);
-//    }
-
-//    public void startTalkActivity() {
-//        Intent talkActivity = new Intent(this, FacialRecognition.class);
-//        startActivity(talkActivity);
-//    }
 
 
     @Override
