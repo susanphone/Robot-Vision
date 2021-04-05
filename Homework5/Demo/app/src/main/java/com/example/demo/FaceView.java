@@ -1,4 +1,4 @@
-package com.example.FacialRecognitionAssignment;
+package com.example.demo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,21 +10,22 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-
+import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetector;
 
 import java.util.List;
 
-
 public class FaceView extends View {
     private Bitmap mBitmap;
-    private List<com.google.mlkit.vision.face.Face> mFaces;
+    private List<Face> mFaces;
 
     public FaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    void setContent(Bitmap bitmap, List<com.google.mlkit.vision.face.Face> faces) {
+    void setContent(Bitmap bitmap, List<Face> faces) {
         Log.v("***DRAW***", "setContent");
 
         mBitmap = bitmap;

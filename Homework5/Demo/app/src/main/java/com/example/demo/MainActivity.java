@@ -1,5 +1,4 @@
-package com.example.FacialRecognitionAssignment;
-
+package com.example.demo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,13 +32,13 @@ import com.google.mlkit.vision.face.FaceDetector;
 import java.io.InputStream;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private TTS tts;
-    String msg;
-    TextView tv;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
     List<Face> fac;
+    TextView tv;
     int count = 0;
+    TTS tts;
 
 
     @Override
@@ -47,8 +46,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv = findViewById(R.id.textView);
+        Button talkButton = findViewById(R.id.talkButton);
+        talkButton.setOnClickListener(this);
+        tts = TTS.getInstance(this);
+        tts.start();
 
-        InputStream stream = getResources().openRawResource(R.raw.image02);
+//        InputStream stream = getResources().openRawResource(R.raw.image01);
+//        InputStream stream = getResources().openRawResource(R.raw.image02);
+//        InputStream stream = getResources().openRawResource(R.raw.images05);
+        InputStream stream = getResources().openRawResource(R.raw.japaneseflowers);
+
+
+
         Bitmap bitmap = BitmapFactory.decodeStream(stream);
         InputImage image = InputImage.fromBitmap(bitmap, 0);
         FaceDetector detector = FaceDetection.getClient();
@@ -66,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 FaceView overlay = (FaceView) findViewById(R.id.faceView);
                                 overlay.setContent(bitmap, fac);
                                 //Success
-                                tv.setText(faces.size() + "Faces Seen");
+                                tv.setText(faces.size() + " Faces Seen");
                                 count = faces.size();
 //                                startSecondActivity();
                             }
@@ -83,14 +92,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v){
         switch(v.getId()){
             case R.id.talkButton:
-               startSecondActivity();
-               break;
+                startSecondActivity();
+                break;
         }
     }
 
     public void startSecondActivity(){
-//        TTS talk = TTS.getInstance(this);
-//        talk.start();
 
         Bundle b = new Bundle();
         b.putString("LM", "There are " + count + " faces in the photo");
@@ -104,25 +111,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
