@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-src = cv.imread("japaneseflowers.jpg", 1)
+src = cv.imread("Homework2/japaneseflowers.jpg", 1)
 if src is None:
     print("missing image")
 else:
